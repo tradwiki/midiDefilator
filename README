@@ -1,5 +1,7 @@
 Installation:
+
   1. Get processing from www.processing.org.
+  
   2. From within the processing IDE menu, click Sketch > Import Library ... > Add library. Then install the Midibus library.
-  3. Place your pictures in a folder named data inside the sketch folder (ie "sketch_180427a/data/photo.jpg"). You can also
-  change the dataDir path at the top of the sketch to fetch photos from elsewhere. The path is relative to the sketch folder.
+  
+  3. Place your pictures in a folder named data inside the sketch folder (ie "sketch_180427a/data/photo.jpg"). You can also change the dataDir path at the top of the sketch to fetch photos from elsewhere. The path is relative to the sketch folder.
