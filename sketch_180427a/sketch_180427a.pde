@@ -1,6 +1,7 @@
 import themidibus.*;
 import javax.sound.midi.MidiMessage; 
-import java.util.Arrays; 
+import java.util.Arrays;
+import java.util.List;
 
 //Midi config
 //Look at console to see available midi inputs and set
@@ -18,9 +19,15 @@ Integer[] notes = {85, 84, 80, 82};
 final int NUM_PADS = notes.length;
 final int MAX_VELOCITY = 128;
 final int MAX_JUMP = 200;
-final int MIN_JUMP = 100;
+final int MIN_JUMP = 50;
 
-ArrayList<Integer> newDestinations; //list of circle velocities updated by callback
+//image files settings
+final int MAX_FILES = 128;
+final String dataDir = "/data/wf/";
+final List<String> allowedExtensions = Arrays.asList("jpg", "png", "pdf");
+
+//Only using one of the elements in each of these arraylists, but kept for future usage
+ArrayList<Integer> newDestinations; //updated by midi callback
 ArrayList<Boolean> padWasPressed; //flags indicating a pad was pressed, also updated by callback
 
 int numFrames = 0;  // The number of frames in the animation
@@ -45,16 +52,27 @@ void setup() {
   }
   // FILES
   String path = sketchPath();
-
-  String[] filenames = listFileNames(path + "/data");
-  // println("Listing all filenames in a directory: ");
-  // printArray(filenames);
+  String[] filenames = listFileNames(path + dataDir);
   filenames = sort(filenames);
-  // numFrames = filenames.length;
-  numFrames = 128;
+  
+  //filter out files that dont have allowed extensions
+  List<String> filteredList = filterFilenames(Arrays.asList(filenames), allowedExtensions);
+  
+  //numFiles is number of available files in folder. All of them might not be used.
+  int numFiles = filteredList.size();
+  if (numFiles > MAX_FILES){
+    filteredList.subList(MAX_FILES, numFiles).clear();
+  }
+  
+  //create final filename list
+  String[] filteredFilenames = new String[filteredList.size()];
+  filteredList.toArray(filteredFilenames); 
+  
+  //numFrames is actual number of files loaded by app.
+  numFrames = filteredFilenames.length;
   images = new PImage[numFrames];
   for (int i = 0; i < numFrames; i += 1) {
-    images[i] = loadImage(path + "/data/" + filenames[i+1]);
+    images[i] = loadImage(path + dataDir + filteredFilenames[i]);
   }
 } 
 
@@ -63,13 +81,13 @@ void draw() {
 
   if (offset > width) {
     offset = 0;
-    currentFrame = (currentFrame + 2) % numFrames;  // Use % to cycle through frames
-    newDestinations.set(0, 0);
+    currentFrame = (currentFrame + 1) % numFrames;  // Use % to cycle through frames
+    newDestinations.set(0, newDestinations.get(0) - width);
     println(currentFrame);
   }
-   offset = Math.round(lerp(offset, newDestinations.get(0), 0.05));
-   image(images[currentFrame], offset, - 20, width, height);
-   image(images[currentFrame+1], offset - width, -20, width, height);
+  offset = Math.round(lerp(offset, newDestinations.get(0), 0.05));
+  image(images[currentFrame], offset, 0, width, height);
+  image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
 }
 
 // This function returns all the files in a directory as an array of Strings  
@@ -99,4 +117,24 @@ void midiMessage(MidiMessage message) {
 
 int noteToPad (int note) {
   return Arrays.asList(notes).indexOf(note);
+}
+
+private static String getFileExtension(String filename) {
+  String extension = "";
+  int i = filename.lastIndexOf('.');
+  if (i > 0) {
+    extension = filename.substring(i+1);
+  }   
+  return extension;
+}
+
+private static List<String> filterFilenames(List<String> names, List<String> allowed) {
+
+  List<String> result = new ArrayList<String>();
+  for (String name : names) {
+    if (allowed.contains(getFileExtension(name))) {
+      result.add(name);
+    }
+  }
+  return result;
 }
