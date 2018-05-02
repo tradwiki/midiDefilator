@@ -23,7 +23,7 @@ final int MIN_JUMP = 50;
 
 //image files settings
 final int MAX_FILES = 128;
-final String dataDir = "/data/wf/";
+final String dataDir = "/data/";
 final List<String> allowedExtensions = Arrays.asList("jpg", "png", "pdf");
 
 //Only using one of the elements in each of these arraylists, but kept for future usage
