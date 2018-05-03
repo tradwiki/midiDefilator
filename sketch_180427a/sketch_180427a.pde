@@ -17,9 +17,12 @@ Integer[] notes = {85, 84, 80, 82};
 
 //midi controller specific
 final int NUM_PADS = notes.length;
-final int MAX_VELOCITY = 128;
-final int MAX_JUMP = 160;
-final int MIN_JUMP = 160;
+final int MAX_VELOCITY = 100;
+
+//Scrolling settings
+final int MAX_JUMP = 200;
+final int MIN_JUMP = 200;
+final float LERP_SPEED = 0.66;
 
 //image files settings
 final int MAX_FILES = 128;
@@ -39,7 +42,8 @@ int offset = 0;
 
 void setup() {
   fullScreen();
-  frameRate(25);
+  frameRate(60);
+  println(width + " x " + height);
 
   //setup midi
   MidiBus.list();
@@ -64,7 +68,7 @@ void setup() {
   try {
     filenames = sort(filenames);
     //filter out files that dont have allowed extensions
-    List<String> lowerCaseExtensions = new List<String>();
+    List<String> lowerCaseExtensions = new ArrayList<String>();
     //create list with only lower cases so that we ignore case when testing file extensions
     for(String ext : allowedExtensions){lowerCaseExtensions.add(ext.toLowerCase());}
     List<String> filteredList = filterFilenames(Arrays.asList(filenames), lowerCaseExtensions);
@@ -90,6 +94,11 @@ void setup() {
     println("No pictures found. Please ensure your files are in the configured dataDir folder and that their extensions are listed in allowedExtensions.");
     exit();
   }
+  
+  if (numFrames == 0){
+    println("No pictures found. Please ensure your files are in the configured dataDir folder and that their extensions are listed in allowedExtensions.");
+    exit();
+  }
 } 
 
 void draw() { 
@@ -101,9 +110,10 @@ void draw() {
     destinations.set(0, destinations.get(0) - width);
     println(currentFrame);
   }
-  offset = Math.round(lerp(offset, destinations.get(0), 0.6));
+  offset = Math.round(lerp(offset, destinations.get(0), LERP_SPEED));
   image(images[currentFrame], offset, 0, width, height);
   image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
+  image(images[(currentFrame+2) % numFrames], offset - (width*2), 0, width, height);
 
   if (padWasPressed.get(0)) {
     int constrainedVelocity = constrain(pressedVelocity.get(0), 0, MAX_VELOCITY);
