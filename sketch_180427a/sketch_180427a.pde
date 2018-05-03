@@ -18,8 +18,8 @@ Integer[] notes = {85, 84, 80, 82};
 //midi controller specific
 final int NUM_PADS = notes.length;
 final int MAX_VELOCITY = 128;
-final int MAX_JUMP = 200;
-final int MIN_JUMP = 50;
+final int MAX_JUMP = 160;
+final int MIN_JUMP = 160;
 
 //image files settings
 final int MAX_FILES = 128;
@@ -27,8 +27,10 @@ final String dataDir = "/data/";
 final List<String> allowedExtensions = Arrays.asList("jpg", "png", "pdf");
 
 //Only using one of the elements in each of these arraylists, but kept for future usage
-ArrayList<Integer> newDestinations; //updated by midi callback
+ArrayList<Integer> destinations; //updated based on pressed velocities
 ArrayList<Boolean> padWasPressed; //flags indicating a pad was pressed, also updated by callback
+ArrayList<Integer> pressedVelocity; //updated by midi callback
+
 
 int numFrames = 0;  // The number of frames in the animation
 int currentFrame = 0;
@@ -36,7 +38,7 @@ PImage[] images;
 int offset = 0;
 
 void setup() {
-  size(640, 360);
+  size(640, 480);
   frameRate(30);
 
   //setup midi
@@ -44,10 +46,12 @@ void setup() {
   myBus = new MidiBus(this, midiDevice, 1); 
 
   //initialize variables set by midi callback
-  newDestinations = new ArrayList<Integer>();
+  destinations = new ArrayList<Integer>();
+  pressedVelocity = new ArrayList<Integer>();
   padWasPressed = new ArrayList<Boolean>();
   for ( int pad = 0; pad < NUM_PADS; pad++) {
-    newDestinations.add(0);
+    destinations.add(0);
+    pressedVelocity.add(0);
     padWasPressed.add(false);
   }
   // FILES
@@ -91,12 +95,21 @@ void draw() {
   if (offset > width) {
     offset = 0;
     currentFrame = (currentFrame + 1) % numFrames;  // Use % to cycle through frames
-    newDestinations.set(0, newDestinations.get(0) - width);
+    destinations.set(0, destinations.get(0) - width);
     println(currentFrame);
   }
-  offset = Math.round(lerp(offset, newDestinations.get(0), 0.05));
+  offset = Math.round(lerp(offset, destinations.get(0), 0.6));
   image(images[currentFrame], offset, 0, width, height);
   image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
+
+  if (padWasPressed.get(0)) {
+    int constrainedVelocity = constrain(pressedVelocity.get(0), 0, MAX_VELOCITY);
+    int mappedVelocity = Math.round(map(constrainedVelocity, 0, MAX_VELOCITY, MIN_JUMP, MAX_JUMP));
+    
+    //extend destination further
+    destinations.set(0, destinations.get(0) + mappedVelocity);
+    padWasPressed.set(0,false);
+  }
 }
 
 // This function returns all the files in a directory as an array of Strings  
@@ -115,12 +128,12 @@ String[] listFileNames(String dir) {
 void midiMessage(MidiMessage message) { 
   int note = (int)(message.getMessage()[1] & 0xFF) ;
   int vel = (int)(message.getMessage()[2] & 0xFF);
-  println("note: " + note + " vel: "+ vel);
+  //println("note: " + note + " vel: "+ vel);
 
   int pad = noteToPad(note);
   if (pad >= 0 && (vel > 0)) {
     padWasPressed.set(pad, true);
-    newDestinations.set(pad, offset + Math.round(map(constrain(vel, 0, MAX_VELOCITY), 0, MAX_VELOCITY, MIN_JUMP, MAX_JUMP)));
+    pressedVelocity.set(pad, vel);
   }
 }
 
