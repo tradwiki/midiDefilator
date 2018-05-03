@@ -64,7 +64,10 @@ void setup() {
   try {
     filenames = sort(filenames);
     //filter out files that dont have allowed extensions
-    List<String> filteredList = filterFilenames(Arrays.asList(filenames), allowedExtensions);
+    List<String> lowerCaseExtensions = new List<String>();
+    //create list with only lower cases so that we ignore case when testing file extensions
+    for(String ext : allowedExtensions){lowerCaseExtensions.add(ext.toLowerCase());}
+    List<String> filteredList = filterFilenames(Arrays.asList(filenames), lowerCaseExtensions);
 
     //numFiles is number of available files in folder. All of them might not be used.
     int numFiles = filteredList.size();
@@ -145,7 +148,7 @@ private static String getFileExtension(String filename) {
   String extension = "";
   int i = filename.lastIndexOf('.');
   if (i > 0) {
-    extension = filename.substring(i+1);
+    extension = filename.substring(i+1).toLowerCase();
   }   
   return extension;
 }
