@@ -53,26 +53,35 @@ void setup() {
   // FILES
   String path = sketchPath();
   String[] filenames = listFileNames(path + dataDir);
-  filenames = sort(filenames);
-  
-  //filter out files that dont have allowed extensions
-  List<String> filteredList = filterFilenames(Arrays.asList(filenames), allowedExtensions);
-  
-  //numFiles is number of available files in folder. All of them might not be used.
-  int numFiles = filteredList.size();
-  if (numFiles > MAX_FILES){
-    filteredList.subList(MAX_FILES, numFiles).clear();
+  if (filenames == null) {
+
+    stop();
   }
-  
-  //create final filename list
-  String[] filteredFilenames = new String[filteredList.size()];
-  filteredList.toArray(filteredFilenames); 
-  
-  //numFrames is actual number of files loaded by app.
-  numFrames = filteredFilenames.length;
-  images = new PImage[numFrames];
-  for (int i = 0; i < numFrames; i += 1) {
-    images[i] = loadImage(path + dataDir + filteredFilenames[i]);
+  try {
+    filenames = sort(filenames);
+    //filter out files that dont have allowed extensions
+    List<String> filteredList = filterFilenames(Arrays.asList(filenames), allowedExtensions);
+
+    //numFiles is number of available files in folder. All of them might not be used.
+    int numFiles = filteredList.size();
+    if (numFiles > MAX_FILES) {
+      filteredList.subList(MAX_FILES, numFiles).clear();
+    }
+
+    //create final filename list
+    String[] filteredFilenames = new String[filteredList.size()];
+    filteredList.toArray(filteredFilenames); 
+
+    //numFrames is actual number of files loaded by app.
+    numFrames = filteredFilenames.length;
+    images = new PImage[numFrames];
+    for (int i = 0; i < numFrames; i += 1) {
+      images[i] = loadImage(path + dataDir + filteredFilenames[i]);
+    }
+  } 
+  catch (Exception e) {
+    println("No pictures found. Please ensure your files are in the configured dataDir folder and that their extensions are listed in allowedExtensions.");
+    exit();
   }
 } 
 
