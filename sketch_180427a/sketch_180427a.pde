@@ -38,8 +38,8 @@ PImage[] images;
 int offset = 0;
 
 void setup() {
-  size(640, 480);
-  frameRate(30);
+  fullScreen();
+  frameRate(25);
 
   //setup midi
   MidiBus.list();
@@ -92,7 +92,7 @@ void setup() {
 void draw() { 
   background(0);
 
-  if (offset > width) {
+  if (offset >= width) {
     offset = 0;
     currentFrame = (currentFrame + 1) % numFrames;  // Use % to cycle through frames
     destinations.set(0, destinations.get(0) - width);
