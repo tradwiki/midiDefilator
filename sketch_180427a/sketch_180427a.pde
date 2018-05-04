@@ -7,13 +7,11 @@ import java.util.List;
 //Look at console to see available midi inputs and set
 //the index of your midi device here
 //TODO:  use gui to select midi input device
-int midiDevice  = 0;
-
-MidiBus myBus;
+final int midiDevice  = 0;
 
 //ordering here dictates correspondence to pads according to the following:
 // BOTTOM_RIGHT // BOTTOM_LEFT // TOP_LEFT // TOP_RIGHT
-Integer[] notes = {85, 84, 80, 82};
+final Integer[] notes = {85, 84, 80, 82};
 
 //midi controller specific
 final int NUM_PADS = notes.length;
@@ -34,6 +32,7 @@ ArrayList<Integer> destinations; //updated based on pressed velocities
 ArrayList<Boolean> padWasPressed; //flags indicating a pad was pressed, also updated by callback
 ArrayList<Integer> pressedVelocity; //updated by midi callback
 
+MidiBus myBus;
 
 int numFrames = 0;  // The number of frames in the animation
 int currentFrame = 0;
@@ -42,7 +41,7 @@ int offset = 0;
 
 void setup() {
   fullScreen();
-  frameRate(60);
+  frameRate(200);
   println(width + " x " + height);
 
   //setup midi
