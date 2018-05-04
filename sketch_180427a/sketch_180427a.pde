@@ -41,7 +41,7 @@ int offset = 0;
 
 void setup() {
   fullScreen();
-  frameRate(200);
+  frameRate(100);
   println(width + " x " + height);
 
   //setup midi
