@@ -18,8 +18,8 @@ final int NUM_PADS = notes.length;
 final int MAX_VELOCITY = 100;
 
 //Scrolling settings
-final int MAX_JUMP = 200;
-final int MIN_JUMP = 200;
+int MAX_JUMP;
+int MIN_JUMP;
 final float LERP_SPEED = 0.66;
 
 //image files settings
@@ -43,6 +43,10 @@ void setup() {
   fullScreen();
   frameRate(100);
   println(width + " x " + height);
+  
+  //TODO: switch to single jump distance since we want images to always realign to center
+  MAX_JUMP = width/10;
+  MIN_JUMP = width/10;
 
   //setup midi
   MidiBus.list();
