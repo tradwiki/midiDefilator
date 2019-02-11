@@ -8,4 +8,4 @@ Installation:
 
 4. Batch resize the images to a resolution proportional to your screen resolution (printed to console on startup). You can use https://bulkresizephotos.com/ with "Exact Size" for this task. Reducing the resolution while keeping proportions can help with performance.
 
-5. Place your pictures in a folder named "data" inside the sketch folder (ie "sketch_180427a/data/photo.jpg"). You can also change the dataDir path at the top of the sketch to fetch photos from elsewhere. The path is relative to the sketch folder.
+5. Place your pictures in a folder named "data" inside the sketch folder (ie "midiDefilator/data/photo.jpg"). You can also change the dataDir path at the top of the sketch to fetch photos from elsewhere. The path is relative to the sketch folder.
