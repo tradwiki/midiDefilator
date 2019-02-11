@@ -11,7 +11,7 @@ final int midiDevice  = 0;
 
 //ordering here dictates correspondence to pads according to the following:
 // BOTTOM_RIGHT // BOTTOM_LEFT // TOP_LEFT // TOP_RIGHT
-final Integer[] notes = {85, 84, 80, 82};
+final Integer[] notes = {80, 84, 82, 85};
 
 //midi controller specific
 final int NUM_PADS = notes.length;
