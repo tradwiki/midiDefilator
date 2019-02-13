@@ -41,12 +41,17 @@ int offset = 0;
 
 PImage frame;
 
+//Configure whether frame should be used
+boolean withFrame = false;
+
 void setup() {
   fullScreen();
   frameRate(30);
   println(width + " x " + height);
   
-  frame = loadImage("frame.png"); 
+  if (withFrame){
+    frame = loadImage("frame.png"); 
+  }
   
   //TODO: switch to single jump distance since we want images to always realign to center
   MAX_JUMP = width/10;
@@ -121,7 +126,9 @@ void draw() {
   image(images[currentFrame], offset, 0, width, height);
   image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
   image(images[(currentFrame+2) % numFrames], offset - (width*2), 0, width, height);
-  image(frame, 0, 0, width, height);
+  if (frame != null && frame.width != -1){
+    image(frame, 0, 0, width, height);
+  }
   
   if (padWasPressed.get(0)) {
     padWasPressed.set(0,false);
