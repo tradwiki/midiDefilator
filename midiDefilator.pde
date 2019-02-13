@@ -39,10 +39,14 @@ int currentFrame = 0;
 PImage[] images;
 int offset = 0;
 
+PImage frame;
+
 void setup() {
   fullScreen();
-  frameRate(100);
+  frameRate(30);
   println(width + " x " + height);
+  
+  frame = loadImage("frame.png"); 
   
   //TODO: switch to single jump distance since we want images to always realign to center
   MAX_JUMP = width/10;
@@ -117,14 +121,15 @@ void draw() {
   image(images[currentFrame], offset, 0, width, height);
   image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
   image(images[(currentFrame+2) % numFrames], offset - (width*2), 0, width, height);
-
+  image(frame, 0, 0, width, height);
+  
   if (padWasPressed.get(0)) {
+    padWasPressed.set(0,false);
     int constrainedVelocity = constrain(pressedVelocity.get(0), 0, MAX_VELOCITY);
     int mappedVelocity = Math.round(map(constrainedVelocity, 0, MAX_VELOCITY, MIN_JUMP, MAX_JUMP));
     
     //extend destination further
     destinations.set(0, destinations.get(0) + mappedVelocity);
-    padWasPressed.set(0,false);
   }
 }
 
