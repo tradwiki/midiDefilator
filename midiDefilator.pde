@@ -23,7 +23,7 @@ int MIN_JUMP;
 final float LERP_SPEED = 0.66;
 
 //1 for right scrolling , -1 for left scrolling
-final int direction = -1;
+final int direction = 1;
 
 //image files settings
 final int MAX_FILES = 128;
