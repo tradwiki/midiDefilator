@@ -22,6 +22,9 @@ int MAX_JUMP;
 int MIN_JUMP;
 final float LERP_SPEED = 0.66;
 
+//1 for right scrolling , -1 for left scrolling
+final int direction = -1;
+
 //image files settings
 final int MAX_FILES = 128;
 final String dataDir = "/data/";
@@ -79,6 +82,7 @@ void setup() {
   }
   try {
     filenames = sort(filenames);
+    println(filenames);
     //filter out files that dont have allowed extensions
     List<String> lowerCaseExtensions = new ArrayList<String>();
     //create list with only lower cases so that we ignore case when testing file extensions
@@ -116,16 +120,16 @@ void setup() {
 void draw() { 
   background(0);
 
-  if (offset >= width) {
+  if (offset >= width || offset <= -width) {
     offset = 0;
     currentFrame = (currentFrame + 1) % numFrames;  // Use % to cycle through frames
-    destinations.set(0, destinations.get(0) - width);
-    println(currentFrame);
+    destinations.set(0, destinations.get(0) - (direction * width));
+    //println(currentFrame);
   }
   offset = Math.round(lerp(offset, destinations.get(0), LERP_SPEED));
   image(images[currentFrame], offset, 0, width, height);
-  image(images[(currentFrame+1) % numFrames], offset - width, 0, width, height);
-  image(images[(currentFrame+2) % numFrames], offset - (width*2), 0, width, height);
+  image(images[(currentFrame+1) % numFrames], offset - (direction * width), 0, width, height);
+  image(images[(currentFrame+2) % numFrames], offset - (direction * width * 2), 0, width, height);
   if (frame != null && frame.width != -1){
     image(frame, 0, 0, width, height);
   }
@@ -136,7 +140,7 @@ void draw() {
     int mappedVelocity = Math.round(map(constrainedVelocity, 0, MAX_VELOCITY, MIN_JUMP, MAX_JUMP));
     
     //extend destination further
-    destinations.set(0, destinations.get(0) + mappedVelocity);
+    destinations.set(0, destinations.get(0) + (direction * mappedVelocity));
   }
 }
 
