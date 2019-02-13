@@ -42,7 +42,7 @@ int offset = 0;
 PImage frame;
 
 //Configure whether frame should be used
-boolean withFrame = false;
+boolean withFrame = true;
 
 void setup() {
   fullScreen();
