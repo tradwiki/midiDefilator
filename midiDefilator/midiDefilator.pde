@@ -159,6 +159,10 @@ String[] listFileNames(String dir) {
 //Called by MidiBus library whenever a new midi message is received
 void midiMessage(MidiMessage message) {
   println(message.getMessage().length);
+  if(message.getMessage().length != 3){
+    println("Unknown message, skipping");
+    return;
+  }
   int note = (int)(message.getMessage()[1] & 0xFF) ;
   int vel = (int)(message.getMessage()[2] & 0xFF);
   println("note: " + note + " vel: "+ vel);
