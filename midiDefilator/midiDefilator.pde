@@ -11,7 +11,7 @@ final int midiDevice  = 0;
 
 //ordering here dictates correspondence to pads according to the following:
 // BOTTOM_RIGHT // BOTTOM_LEFT // TOP_LEFT // TOP_RIGHT
-final Integer[] notes = {80, 84, 82, 85};
+final Integer[] notes = {85, 82, 84, 80};
 
 //midi controller specific
 final int NUM_PADS = notes.length;
@@ -157,10 +157,11 @@ String[] listFileNames(String dir) {
 }
 
 //Called by MidiBus library whenever a new midi message is received
-void midiMessage(MidiMessage message) { 
+void midiMessage(MidiMessage message) {
+  println(message.getMessage().length);
   int note = (int)(message.getMessage()[1] & 0xFF) ;
   int vel = (int)(message.getMessage()[2] & 0xFF);
-  //println("note: " + note + " vel: "+ vel);
+  println("note: " + note + " vel: "+ vel);
 
   int pad = noteToPad(note);
   if (pad >= 0 && (vel > 0)) {
