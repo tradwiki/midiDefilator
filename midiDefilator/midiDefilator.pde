@@ -51,11 +51,11 @@ void setup() {
   fullScreen();
   frameRate(30);
   println(width + " x " + height);
-  
-  if (withFrame){
-    frame = loadImage("frame.png"); 
+
+  if (withFrame) {
+    frame = loadImage("frame.png");
   }
-  
+
   //TODO: switch to single jump distance since we want images to always realign to center
   MAX_JUMP = width/10;
   MIN_JUMP = width/10;
@@ -86,7 +86,9 @@ void setup() {
     //filter out files that dont have allowed extensions
     List<String> lowerCaseExtensions = new ArrayList<String>();
     //create list with only lower cases so that we ignore case when testing file extensions
-    for(String ext : allowedExtensions){lowerCaseExtensions.add(ext.toLowerCase());}
+    for (String ext : allowedExtensions) {
+      lowerCaseExtensions.add(ext.toLowerCase());
+    }
     List<String> filteredList = filterFilenames(Arrays.asList(filenames), lowerCaseExtensions);
 
     //numFiles is number of available files in folder. All of them might not be used.
@@ -110,8 +112,8 @@ void setup() {
     println("No pictures found. Please ensure your files are in the configured dataDir folder and that their extensions are listed in allowedExtensions.");
     exit();
   }
-  
-  if (numFrames == 0){
+
+  if (numFrames == 0) {
     println("No pictures found. Please ensure your files are in the configured dataDir folder and that their extensions are listed in allowedExtensions.");
     exit();
   }
@@ -130,15 +132,15 @@ void draw() {
   image(images[currentFrame], offset, 0, width, height);
   image(images[(currentFrame+1) % numFrames], offset - (direction * width), 0, width, height);
   image(images[(currentFrame+2) % numFrames], offset - (direction * width * 2), 0, width, height);
-  if (frame != null && frame.width != -1){
+  if (frame != null && frame.width != -1) {
     image(frame, 0, 0, width, height);
   }
-  
+
   if (padWasPressed.get(0)) {
-    padWasPressed.set(0,false);
+    padWasPressed.set(0, false);
     int constrainedVelocity = constrain(pressedVelocity.get(0), 0, MAX_VELOCITY);
     int mappedVelocity = Math.round(map(constrainedVelocity, 0, MAX_VELOCITY, MIN_JUMP, MAX_JUMP));
-    
+
     //extend destination further
     destinations.set(0, destinations.get(0) + (direction * mappedVelocity));
   }
@@ -158,13 +160,20 @@ String[] listFileNames(String dir) {
 
 //Called by MidiBus library whenever a new midi message is received
 void midiMessage(MidiMessage message) {
-  println(message.getMessage().length);
-  if(message.getMessage().length != 3){
+
+  byte messageType = message.getMessage()[0];
+  int channel = -1;
+  int note = -1;
+  int vel = -1;
+  //Parse messages
+  if ((messageType & 0xF0) == 0x80 || (messageType & 0xF0) == 0x90) {
+    channel = (int) (messageType & 0x0F);
+    note = (int)(message.getMessage()[1] & 0xFF);
+    vel = (int)(message.getMessage()[2] & 0xFF);
+  } else {
     println("Unknown message, skipping");
     return;
   }
-  int note = (int)(message.getMessage()[1] & 0xFF) ;
-  int vel = (int)(message.getMessage()[2] & 0xFF);
   println("note: " + note + " vel: "+ vel);
 
   int pad = noteToPad(note);
