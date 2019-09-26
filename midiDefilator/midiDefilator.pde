@@ -48,7 +48,7 @@ PImage frame;
 boolean withFrame = false;
 
 void setup() {
-  fullScreen();
+  fullScreen(P2D);
   frameRate(30);
   println(width + " x " + height);
 
